@@ -2,21 +2,22 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#05080d">
 <title>Смена 03 — симулятор скорой помощи</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Manrope:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#05080d;--p1:#0a1018;--p2:#0f1823;--p3:#152130;--ln:#1d2a3a;--tx:#e8eef6;--mu:#7d8fa6;--ecg:#3dff8f;--spo:#36d7ff;--bp:#ff6b78;--rr:#ffd447;--am:#ffad33;--rd:#ff3d51;--gn:#2fe38a;--vi:#b48cff;--bl:#4c8dff}
+:root{--sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px);--sal:env(safe-area-inset-left,0px);--sar:env(safe-area-inset-right,0px);--bg:#05080d;--p1:#0a1018;--p2:#0f1823;--p3:#152130;--ln:#1d2a3a;--tx:#e8eef6;--mu:#7d8fa6;--ecg:#3dff8f;--spo:#36d7ff;--bp:#ff6b78;--rr:#ffd447;--am:#ffad33;--rd:#ff3d51;--gn:#2fe38a;--vi:#b48cff;--bl:#4c8dff}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 input,textarea{-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
 html,body{touch-action:manipulation}
 img,svg,canvas{-webkit-user-drag:none}
 html,body{margin:0;background:var(--bg);color:var(--tx);font-family:Manrope,system-ui,sans-serif;font-size:15px}
 body{min-height:100vh;min-height:100dvh;overscroll-behavior:none}
-#app{max-width:520px;margin:0 auto;padding:12px 12px calc(28px + env(safe-area-inset-bottom))}
+#app{max-width:520px;margin:0 auto;padding:calc(12px + var(--sat)) calc(12px + var(--sar)) calc(28px + var(--sab)) calc(12px + var(--sal))}
+html.fs body{background:var(--bg)}
 .mono{font-family:'JetBrains Mono',ui-monospace,monospace}
 .disp{font-family:Unbounded,Manrope,sans-serif}
 button{font-family:inherit;color:inherit}
@@ -133,10 +134,10 @@ button{font-family:inherit;color:inherit}
 @keyframes prog{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 /* modal */
 .modal{position:fixed;inset:0;background:rgba(1,3,6,.8);z-index:80;display:flex;align-items:flex-end;justify-content:center}
-.sheet{background:var(--p1);border:1px solid var(--ln);border-radius:20px 20px 0 0;width:100%;max-width:520px;max-height:92vh;overflow:auto;padding:16px 14px calc(18px + env(safe-area-inset-bottom))}
+.sheet{background:var(--p1);border:1px solid var(--ln);border-radius:20px 20px 0 0;width:100%;max-width:520px;max-height:calc(100vh - var(--sat) - 10px);max-height:calc(var(--vh,100dvh) - var(--sat) - 10px);overflow:auto;overscroll-behavior:contain;padding:16px calc(14px + var(--sar)) calc(18px + var(--sab)) calc(14px + var(--sal))}
 .sheet h3{margin:0 0 6px;font-family:Unbounded,sans-serif;font-size:17px}
 .paper{width:100%;display:block;border-radius:8px;margin-top:8px}
-.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translateX(-50%);background:#1b2a3c;border:1px solid #2c4058;color:#fff;padding:10px 16px;border-radius:12px;font-size:13.5px;font-weight:700;z-index:99;max-width:90vw;text-align:center;animation:tin .2s}
+.toast{position:fixed;left:50%;bottom:calc(24px + var(--sab));transform:translateX(-50%);background:#1b2a3c;border:1px solid #2c4058;color:#fff;padding:10px 16px;border-radius:12px;font-size:13.5px;font-weight:700;z-index:99;max-width:90vw;text-align:center;animation:tin .2s}
 @keyframes tin{from{opacity:0;transform:translate(-50%,8px)}}
 /* cpr */
 .cprh{display:flex;align-items:center;gap:8px;margin-bottom:8px}
@@ -201,7 +202,7 @@ details.tl summary{cursor:pointer;color:var(--mu);font-size:12.5px;font-weight:7
 .av{transition:box-shadow .4s}
 .gl{font-size:13px;line-height:1.6;margin-top:8px}
 .gl b{color:var(--spo)}
-.cine{position:fixed;inset:0;z-index:95;background:#020407;display:flex;align-items:center;justify-content:center;overflow:hidden;animation:cinIn .25s}
+.cine{position:fixed;inset:0;padding:var(--sat) var(--sar) var(--sab) var(--sal);z-index:95;background:#020407;display:flex;align-items:center;justify-content:center;overflow:hidden;animation:cinIn .25s}
 .cine.out{animation:cinOut .3s forwards}
 @keyframes cinIn{from{opacity:0}}@keyframes cinOut{to{opacity:0}}
 .cin-in{text-align:center;padding:20px;max-width:440px;animation:push 2.8s ease-out forwards}
@@ -234,6 +235,32 @@ function tgInit(){
   try{TG.ready();TG.expand();}catch(e){}
   try{TG.setHeaderColor('#05080d');TG.setBackgroundColor('#05080d');}catch(e){}
   try{if(TG.disableVerticalSwipes) TG.disableVerticalSwipes();}catch(e){}
+  try{TG.setBottomBarColor&&TG.setBottomBarColor('#05080d');}catch(e){}
+  // Полноэкранный режим (Bot API 8.0+): только на телефонах — на ПК это развернуло бы окно на весь монитор
+  const mobile=/^(ios|android)/.test(TG.platform||'');
+  const v8=TG.isVersionAtLeast&&TG.isVersionAtLeast('8.0');
+  const on=(ev,fn)=>{try{TG.onEvent(ev,fn);}catch(e){}};
+  ['safeAreaChanged','contentSafeAreaChanged','fullscreenChanged','viewportChanged'].forEach(ev=>on(ev,applySafe));
+  on('fullscreenFailed',()=>applySafe());
+  if(v8&&mobile&&!TG.isFullscreen){
+    try{TG.requestFullscreen();}catch(e){}
+    try{if(TG.lockOrientation&&innerHeight>innerWidth) TG.lockOrientation();}catch(e){}
+  }
+  applySafe();
+}
+/* Безопасные зоны: вырез/статус-бар (safeAreaInset) + плавающие кнопки Telegram в полноэкранном режиме (contentSafeAreaInset) */
+function applySafe(){
+  if(!TG) return;
+  const st=document.documentElement.style, sa=TG.safeAreaInset||{}, ca=TG.contentSafeAreaInset||{};
+  const px=(a,b)=>((+a||0)+(+b||0))+'px';
+  if(TG.safeAreaInset){
+    st.setProperty('--sat',px(sa.top,ca.top));
+    st.setProperty('--sab',px(sa.bottom,ca.bottom));
+    st.setProperty('--sal',px(sa.left,ca.left));
+    st.setProperty('--sar',px(sa.right,ca.right));
+  }
+  if(TG.viewportStableHeight) st.setProperty('--vh',TG.viewportStableHeight+'px');
+  document.documentElement.classList.toggle('fs',!!TG.isFullscreen);
 }
 const hap={
   tap(){try{TG.HapticFeedback.impactOccurred('light')}catch(e){try{navigator.vibrate&&navigator.vibrate(8)}catch(_){}}},
@@ -276,22 +303,86 @@ function vig(c){const d=document.createElement('div');d.className='vig';d.style.
 function flash(){const d=document.createElement('div');d.className='flash';document.body.appendChild(d);setTimeout(()=>d.remove(),400);}
 
 /* ================= save ================= */
-const SAVE_KEY='smena03_v1';
-function defSave(){return{xp:0,stats:{calls:0,saved:0,died:0,rosc:0,shifts:0,s3:0,best:0},atlas:{},daily:{},streak:{last:'',n:0},ach:{},sound:true,metro:true,tut:false};}
+const SAVE_KEY='smena03_v1';           // localStorage + старый облачный ключ (миграция)
+const CK='s03';                        // облако: s03_n = число частей, s03_0..s03_k = части JSON
+const CHUNK=3800, CMAX=60;             // лимит значения CloudStorage — 4096 символов
+function defSave(){return{xp:0,stats:{calls:0,saved:0,died:0,rosc:0,shifts:0,s3:0,best:0,mci:0},atlas:{},daily:{},streak:{last:'',n:0},ach:{},sound:true,metro:true,tut:false,ts:0};}
 let save=defSave();
+function norm(o){const d=defSave();if(!o||typeof o!=='object')return d;const r=Object.assign(d,o);
+  r.stats=Object.assign(defSave().stats,o.stats||{});r.atlas=o.atlas||{};r.daily=o.daily||{};r.ach=o.ach||{};r.streak=Object.assign({last:'',n:0},o.streak||{});r.xp=+r.xp||0;return r;}
+/* Слияние двух сохранений: ничего не теряем — берём лучшее по каждому полю */
+function mergeSave(a,b){
+  a=norm(a);b=norm(b);const r=norm(JSON.parse(JSON.stringify((b.ts||0)>(a.ts||0)?b:a))); // настройки — из более свежего
+  r.xp=Math.max(a.xp,b.xp);
+  for(const k of new Set([...Object.keys(a.stats),...Object.keys(b.stats)]))r.stats[k]=Math.max(+a.stats[k]||0,+b.stats[k]||0);
+  r.atlas={};for(const id of new Set([...Object.keys(a.atlas),...Object.keys(b.atlas)])){const x=a.atlas[id],y=b.atlas[id];
+    if(!x||!y){r.atlas[id]=JSON.parse(JSON.stringify(x||y));continue;}
+    const vs=[...new Set([...(x.vs||[]),...(y.vs||[])])];r.atlas[id]={n:Math.max(x.n||0,y.n||0),best:Math.max(x.best||0,y.best||0),score:Math.max(x.score||0,y.score||0)};if(vs.length)r.atlas[id].vs=vs;}
+  r.daily={};for(const d of new Set([...Object.keys(a.daily),...Object.keys(b.daily)])){const x=a.daily[d],y=b.daily[d];r.daily[d]=!x?y:!y?x:((y.score||0)>(x.score||0)?y:x);}
+  r.ach={};for(const id of new Set([...Object.keys(a.ach),...Object.keys(b.ach)])){const x=a.ach[id],y=b.ach[id];r.ach[id]=x&&y?Math.min(x,y):(x||y);}
+  const sa=a.streak,sb=b.streak;r.streak=sa.last===sb.last?{last:sa.last,n:Math.max(sa.n,sb.n)}:(sa.last>sb.last?{...sa}:{...sb});
+  r.dstart=[a.dstart||'',b.dstart||''].sort().pop()||undefined;if(!r.dstart)delete r.dstart;
+  r.ts=Math.max(a.ts||0,b.ts||0);
+  return r;
+}
+function trimSave(o){const ks=Object.keys(o.daily).sort();while(ks.length>12)delete o.daily[ks.shift()];return o;}
+const cloudOK=()=>!!(inTG&&TG.CloudStorage&&(!TG.isVersionAtLeast||TG.isVersionAtLeast('6.9')));
+function cloudRead(cb){ // cb(obj|null)
+  if(!cloudOK())return cb(null);let done=false;const fin=v=>{if(!done){done=true;cb(v);}};setTimeout(()=>fin(null),2500);
+  try{TG.CloudStorage.getItem(CK+'_n',(e,n)=>{
+    n=parseInt(n,10);
+    if(e||!(n>0)){ // нет нового формата — пробуем старый ключ
+      try{TG.CloudStorage.getItem(SAVE_KEY,(e2,v)=>{let o=null;if(!e2&&v){try{o=JSON.parse(v);}catch(_){}}fin(o);});}catch(_){fin(null);}return;}
+    const keys=[];for(let i=0;i<Math.min(n,CMAX);i++)keys.push(CK+'_'+i);
+    TG.CloudStorage.getItems(keys,(e3,vals)=>{if(e3||!vals)return fin(null);
+      try{fin(JSON.parse(keys.map(k=>vals[k]||'').join('')));}catch(_){fin(null);}});
+  });}catch(e){fin(null);}
+}
+let cloudLast='',cloudBusy=false,cloudNext=null;
+function cloudWrite(str,cb){
+  if(!cloudOK()||str===cloudLast){cb&&cb();return;}
+  if(cloudBusy){cloudNext=str;cb&&cb();return;} // запись уже идёт — допишем свежую версию следом
+  cloudBusy=true;const done=cb;cb=()=>{cloudBusy=false;done&&done();if(cloudNext){const n=cloudNext;cloudNext=null;cloudWrite(n);}};
+  const parts=[];for(let i=0;i<str.length;i+=CHUNK)parts.push(str.slice(i,i+CHUNK));
+  if(parts.length>CMAX){cb&&cb();return;}
+  let left=parts.length,fail=false;
+  const after=()=>{ // счётчик частей пишем последним — читатель не увидит «полусохранение»
+    if(fail){cb&&cb();return;}
+    try{TG.CloudStorage.setItem(CK+'_n',String(parts.length),e=>{if(!e)cloudLast=str;cb&&cb();});}catch(_){cb&&cb();}};
+  parts.forEach((pt,i)=>{try{TG.CloudStorage.setItem(CK+'_'+i,pt,e=>{if(e)fail=true;if(--left===0)after();});}catch(_){fail=true;if(--left===0)after();}});
+}
+let cloudTimer=0;
+function cloudFlush(){clearTimeout(cloudTimer);cloudTimer=0;cloudWrite(JSON.stringify(save));}
 function loadSave(cb){
-  try{const l=JSON.parse(localStorage.getItem(SAVE_KEY));if(l)save=Object.assign(defSave(),l);}catch(e){}
-  if(inTG&&TG.CloudStorage){let done=false;const fin=()=>{if(!done){done=true;cb();}};
-    try{TG.CloudStorage.getItem(SAVE_KEY,(err,v)=>{if(!err&&v){try{const c=JSON.parse(v);if((c.xp||0)>(save.xp||0))save=Object.assign(defSave(),c);}catch(e){}}fin();});}catch(e){fin();}
-    setTimeout(fin,1500);return;}
-  cb();
+  try{const l=JSON.parse(localStorage.getItem(SAVE_KEY));if(l)save=norm(l);}catch(e){}
+  if(!cloudOK()){cb();return;}
+  let shown=false;const show=()=>{if(!shown){shown=true;cb();}};
+  const t=setTimeout(show,1500); // медленный интернет — не держим игрока, догоним синхронизацией
+  cloudRead(c=>{clearTimeout(t);
+    if(c){const before=JSON.stringify(save);save=trimSave(mergeSave(save,c));
+      try{localStorage.setItem(SAVE_KEY,JSON.stringify(save));}catch(e){}
+      if(shown&&JSON.stringify(save)!==before)refreshIfIdle();}
+    cloudWrite(JSON.stringify(save));show();});
+}
+/* Подтягиваем прогресс с другого устройства при возврате в игру */
+function cloudPull(){
+  if(!cloudOK())return;
+  cloudRead(c=>{if(!c)return;const before=JSON.stringify(save);save=trimSave(mergeSave(save,c));const now=JSON.stringify(save);
+    if(now!==before){try{localStorage.setItem(SAVE_KEY,now);}catch(e){}refreshIfIdle();}
+    cloudWrite(now);});
+}
+function refreshIfIdle(){ // перерисовать только главное меню — бой и смену не трогаем
+  try{applyCity();if(!G&&!M&&!$('#modal')&&document.querySelector('#app [data-a="daily"]'))showMenu();}catch(e){}
 }
 function persist(){
-  const ks=Object.keys(save.daily).sort();while(ks.length>12){delete save.daily[ks.shift()];}
+  trimSave(save);save.ts=Date.now();
   const s=JSON.stringify(save);
   try{localStorage.setItem(SAVE_KEY,s);}catch(e){}
-  if(inTG&&TG.CloudStorage&&s.length<4000){try{TG.CloudStorage.setItem(SAVE_KEY,s);}catch(e){}}
+  if(cloudOK()){clearTimeout(cloudTimer);cloudTimer=setTimeout(cloudFlush,700);}
 }
+document.addEventListener('visibilitychange',()=>{if(document.hidden){if(cloudTimer)cloudFlush();}else cloudPull();});
+addEventListener('pagehide',()=>{if(cloudTimer)cloudFlush();});
+if(TG){try{TG.onEvent('activated',cloudPull);TG.onEvent('deactivated',()=>{if(cloudTimer)cloudFlush();});}catch(e){}}
 
 /* ================= audio ================= */
 let AC=null;
@@ -1168,6 +1259,7 @@ function pickCase(){
   const c=G.rng.pick(pool);G.recent.push(c.id);if(G.recent.length>3)G.recent.shift();return c;
 }
 function startShift(mode,caseId,practice){
+  R=null;C=null;MG=null;try{stopMetro();stopTick();}catch(e){}if(typeof monRhythmOverride!=='undefined')monRhythmOverride=null;
   const seed=mode==='daily'?hashStr('smena03-'+todayStr()):(Date.now()>>>0);
   const rng=new RNG(seed);
   G={mode,practice:!!practice,seed,rng,clock:8*60,end:mode==='duty'?20*60:1e9,queue:[],made:0,maxCalls:mode==='daily'?5:mode==='train'?1:999,results:[],score:0,perfect:0,deaths:0,brigade:rng.int(3,29),recent:[],nextArrival:8*60,badTotal:0};
@@ -1696,7 +1788,7 @@ function updCPR(){
       b.addEventListener('pointerdown',ev=>{ev.preventDefault();ac();b.classList.add('dn');if(R&&R.phase==='comp')onCompress();else if(R&&R.phase==='vent')onBreath();});
       const up=()=>b.classList.remove('dn');b.addEventListener('pointerup',up);b.addEventListener('pointerleave',up);b.addEventListener('pointercancel',up);
     }
-    const rv=$('#rv');rv.textContent=rate||'—';rv.style.color=rate?(good?'var(--gn)':'#ff7a86'):'';
+    const rv=$('#rv');rv.textContent=rate>200?'>200':(rate||'—');rv.style.color=rate?(good?'var(--gn)':'#ff7a86'):'';
     $('#rm').style.left=`calc(${pos*100}% - 2px)`;
     const b=$('#press');
     if(R.phase==='comp'){b.className='press'+(b.classList.contains('dn')?' dn':'');b.innerHTML=`ДАВИТЬ<small>${R.comps}/30</small>`;}
@@ -1969,10 +2061,10 @@ A.refDone=()=>{
 let M=null,mciTimer=null;
 const MCI_PLACES=()=>isKrd()?['Ростовское шоссе: маршрутка столкнулась с фурой','Тургеневский мост: массовое ДТП в гололёд','Кубанская Набережная: автобус влетел в остановку']:['Трасса: маршрутка столкнулась с фурой','Мост: массовое ДТП в гололёд','Центр города: автобус влетел в остановку'];
 const MV={
- g1:r=>({e:'🧍‍♂️',d:'Мужчина ~30 стоит у машины, рассечена бровь, ругается на водителя фуры',walk:1}),
- g2:r=>({e:'🧍‍♀️',d:'Женщина ~25 ходит кругами и плачет, правая рука висит — похоже на перелом',walk:1}),
- g3:r=>({e:'🧓',d:'Пожилой мужчина ~70 сам выбрался из салона, держится за грудь — ударился о поручень',walk:1}),
- g4:r=>({e:'👧',d:'Девушка ~20 ходит, ссадины на ладонях, звонит маме',walk:1}),
+ g1:r=>({e:'🧍‍♂️',d:'Мужчина ~30 стоит у машины, рассечена бровь, ругается на водителя фуры',walk:1,rr:r.int(16,20),radial:1,cap:1.2,cmd:1}),
+ g2:r=>({e:'🧍‍♀️',d:'Женщина ~25 ходит кругами и плачет, правая рука висит — похоже на перелом',walk:1,rr:r.int(18,22),radial:1,cap:1.2,cmd:1}),
+ g3:r=>({e:'🧓',d:'Пожилой мужчина ~70 сам выбрался из салона, держится за грудь — ударился о поручень',walk:1,rr:r.int(18,22),radial:1,cap:1.2,cmd:1}),
+ g4:r=>({e:'👧',d:'Девушка ~20 ходит, ссадины на ладонях, звонит маме',walk:1,rr:r.int(14,18),radial:1,cap:1.2,cmd:1}),
  y1:r=>({e:'🧔',d:'Мужчина ~50 сидит на обочине, голень деформирована, встать не может',rr:r.int(18,24),radial:1,cap:1.5,cmd:1}),
  y2:r=>({e:'👩',d:'Женщина ~35 лежит у отбойника, жалуется на боль в животе',rr:r.int(20,26),radial:1,cap:1.5,cmd:1}),
  y3:r=>({e:'👨',d:'Мужчина ~45 зажат ногами в кресле, в сознании, отвечает',rr:r.int(18,24),radial:1,cap:1.8,cmd:1}),
