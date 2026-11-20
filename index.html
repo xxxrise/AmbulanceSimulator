@@ -1262,7 +1262,7 @@ function startShift(mode,caseId,practice){
   R=null;C=null;MG=null;try{stopMetro();stopTick();}catch(e){}if(typeof monRhythmOverride!=='undefined')monRhythmOverride=null;
   const seed=mode==='daily'?hashStr('smena03-'+todayStr()):(Date.now()>>>0);
   const rng=new RNG(seed);
-  G={mode,practice:!!practice,seed,rng,clock:8*60,end:mode==='duty'?20*60:1e9,queue:[],made:0,maxCalls:mode==='daily'?5:mode==='train'?1:999,results:[],score:0,perfect:0,deaths:0,brigade:rng.int(3,29),recent:[],nextArrival:8*60,badTotal:0};
+  G={mode,practice:!!practice,seed,rng,clock:8*60,end:mode==='duty'?20*60:1e9,queue:[],made:0,maxCalls:mode==='daily'?5:mode==='train'?1:999,results:[],score:0,perfect:0,deaths:0,brigade:rng.pick([72,73,74,75,76]),recent:[],nextArrival:8*60,badTotal:0};
   if(mode==='daily'){G.order=rng.shuffle(CASES.map(c=>c.id)).slice(0,5);}
   closingConfirm(true);
   if(mode==='train'){const call=newCall(CASE[caseId],rng,G.clock);call.travel=0;call.lift=false;G.made=1;goTravel(call);return;}
